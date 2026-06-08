@@ -1,0 +1,686 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>iCampus 宿舍报修原型</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --panel: #ffffff;
+      --ink: #172033;
+      --muted: #6b7280;
+      --line: #d9e1ec;
+      --primary: #2563eb;
+      --primary-soft: #e8f0ff;
+      --ok: #16a34a;
+      --warn: #f59e0b;
+      --danger: #dc2626;
+      --shadow: 0 18px 45px rgba(23, 32, 51, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    .page {
+      width: min(430px, 100%);
+      margin: 0 auto;
+      min-height: 100vh;
+      padding: 0;
+    }
+
+    .phone {
+      min-height: 100vh;
+      background: var(--panel);
+      border-left: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .topbar {
+      padding: 18px 18px 12px;
+      background: linear-gradient(160deg, #2563eb, #0f766e);
+      color: white;
+    }
+
+    .topbar h1 {
+      margin: 0 0 6px;
+      font-size: 22px;
+      letter-spacing: 0;
+    }
+
+    .topbar p {
+      margin: 0;
+      font-size: 13px;
+      opacity: 0.9;
+      line-height: 1.5;
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding: 12px;
+      background: #edf3fb;
+    }
+
+    .tab {
+      border: 0;
+      border-radius: 8px;
+      padding: 9px 6px;
+      color: var(--muted);
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .tab.active {
+      background: white;
+      color: var(--primary);
+      font-weight: 700;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.12);
+    }
+
+    .screen {
+      display: none;
+      padding: 16px;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    .notice {
+      padding: 12px;
+      border-radius: 8px;
+      background: var(--primary-soft);
+      color: #1e3a8a;
+      font-size: 13px;
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+
+    .module-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin: 0 0 10px;
+      font-size: 16px;
+    }
+
+    .module-title span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 400;
+    }
+
+    .mini-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .mini-stat {
+      padding: 10px;
+      border-radius: 8px;
+      background: #f8fafc;
+      border: 1px solid var(--line);
+    }
+
+    .mini-stat strong {
+      display: block;
+      font-size: 18px;
+      margin-bottom: 2px;
+    }
+
+    .mini-stat span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .field {
+      margin-bottom: 12px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 11px;
+      background: white;
+      color: var(--ink);
+      outline: none;
+    }
+
+    .field textarea {
+      min-height: 88px;
+      resize: vertical;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .primary-btn,
+    .ghost-btn {
+      width: 100%;
+      border: 0;
+      border-radius: 8px;
+      padding: 11px 12px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .primary-btn {
+      color: white;
+      background: var(--primary);
+    }
+
+    .ghost-btn {
+      color: var(--primary);
+      background: var(--primary-soft);
+    }
+
+    .card {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+
+    .ticket-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: start;
+      margin-bottom: 8px;
+    }
+
+    .ticket-head h2 {
+      margin: 0;
+      font-size: 17px;
+    }
+
+    .ticket-meta {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .badge {
+      flex: 0 0 auto;
+      border-radius: 999px;
+      padding: 4px 9px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #1e3a8a;
+      background: var(--primary-soft);
+    }
+
+    .badge.done {
+      color: #14532d;
+      background: #dcfce7;
+    }
+
+    .timeline {
+      margin: 14px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .timeline li {
+      position: relative;
+      padding: 0 0 18px 24px;
+      border-left: 2px solid var(--line);
+    }
+
+    .timeline li:last-child {
+      padding-bottom: 0;
+    }
+
+    .timeline li::before {
+      content: "";
+      position: absolute;
+      left: -7px;
+      top: 2px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #cbd5e1;
+      border: 2px solid white;
+    }
+
+    .timeline li.active::before,
+    .timeline li.done::before {
+      background: var(--primary);
+    }
+
+    .timeline li.done {
+      color: var(--ink);
+    }
+
+    .timeline strong {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 3px;
+    }
+
+    .timeline span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .actions {
+      display: grid;
+      gap: 9px;
+      margin-top: 12px;
+    }
+
+    .time-pick {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .time-pick button {
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    .time-pick button small {
+      font-weight: 400;
+      font-size: 11px;
+      opacity: 0.8;
+    }
+
+    .time-pick .ghost-btn.selected {
+      color: white;
+      background: var(--primary);
+    }
+
+    .empty {
+      border: 1px dashed var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      transform: translateX(-50%) translateY(90px);
+      padding: 10px 16px;
+      border-radius: 999px;
+      color: white;
+      background: rgba(23, 32, 51, 0.9);
+      opacity: 0;
+      transition: 0.22s ease;
+      pointer-events: none;
+      font-size: 14px;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 480px) {
+      .page {
+        width: 100%;
+      }
+
+      .phone {
+        border: 0;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="phone" aria-label="iCampus 宿舍报修移动端原型">
+      <header class="topbar">
+        <h1>iCampus 宿舍报修</h1>
+        <p>学生在线提交问题，宿管派单，维修师傅确认上门时间，进度全程可见。</p>
+      </header>
+
+      <nav class="tabs" aria-label="原型页面切换">
+        <button class="tab active" data-screen="student">学生</button>
+        <button class="tab" data-screen="housekeeper">宿管阿姨</button>
+        <button class="tab" data-screen="worker">维修师傅</button>
+      </nav>
+
+      <section id="student" class="screen active">
+        <div class="notice">学生视角：提交宿舍报修，并在同一页面看到自己的报修进度。</div>
+        <article class="card">
+          <h2 class="module-title">提交报修 <span>学生填写</span></h2>
+          <form id="repairForm">
+            <div class="row">
+              <div class="field">
+                <label for="building">楼栋</label>
+                <input id="building" value="12号楼">
+              </div>
+              <div class="field">
+                <label for="room">房间</label>
+                <input id="room" value="508">
+              </div>
+            </div>
+            <div class="field">
+              <label for="type">报修类型</label>
+              <select id="type">
+                <option>水电维修</option>
+                <option>门窗桌椅</option>
+                <option>空调网络</option>
+                <option>其他问题</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="desc">问题描述</label>
+              <textarea id="desc">洗手台下方水管漏水，晚上滴水比较明显，希望尽快处理。</textarea>
+            </div>
+            <div class="field">
+              <label for="phone">联系电话</label>
+              <input id="phone" value="138****2026">
+            </div>
+            <button class="primary-btn" type="submit">提交报修单</button>
+          </form>
+        </article>
+        <h2 class="module-title">我的报修进度 <span>学生查看</span></h2>
+        <div id="studentTicketList"></div>
+      </section>
+
+      <section id="housekeeper" class="screen">
+        <div class="notice">宿管阿姨视角：集中查看学生报修单，确认信息后派给维修师傅。</div>
+        <div class="mini-stats">
+          <div class="mini-stat"><strong>2</strong><span>今日报修</span></div>
+          <div class="mini-stat"><strong>1</strong><span>待派单</span></div>
+          <div class="mini-stat"><strong>1</strong><span>处理中</span></div>
+        </div>
+        <h2 class="module-title">报修单处理 <span>宿管派单</span></h2>
+        <div id="housekeeperPanel"></div>
+      </section>
+
+      <section id="worker" class="screen">
+        <div class="notice">维修师傅视角：查看被分配的任务，确认上门时间，并在维修后更新完成状态。</div>
+        <div class="mini-stats">
+          <div class="mini-stat"><strong>1</strong><span>已接单</span></div>
+          <div class="mini-stat"><strong>1</strong><span>待上门</span></div>
+          <div class="mini-stat"><strong>0</strong><span>已完成</span></div>
+        </div>
+        <h2 class="module-title">我的维修任务 <span>师傅处理</span></h2>
+        <div id="workerPanel"></div>
+      </section>
+    </section>
+  </main>
+
+  <div id="toast" class="toast">已更新</div>
+
+  <script>
+    const stateNames = ["待受理", "已派单", "预约上门", "维修完成"];
+    const tickets = [
+      {
+        id: "WX20260608001",
+        building: "12号楼",
+        room: "508",
+        type: "水电维修",
+        desc: "洗手台下方水管漏水，晚上滴水比较明显。",
+        phone: "138****2026",
+        state: 1,
+        worker: "陈师傅",
+        eta: "待师傅确认",
+        created: "2026-06-08 09:12"
+      }
+    ];
+
+    const tabs = document.querySelectorAll(".tab");
+    const screens = document.querySelectorAll(".screen");
+    const form = document.getElementById("repairForm");
+    const studentTicketList = document.getElementById("studentTicketList");
+    const housekeeperPanel = document.getElementById("housekeeperPanel");
+    const workerPanel = document.getElementById("workerPanel");
+    const toast = document.getElementById("toast");
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => showScreen(tab.dataset.screen));
+    });
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const nextId = String(tickets.length + 1).padStart(3, "0");
+      tickets.unshift({
+        id: `WX20260608${nextId}`,
+        building: document.getElementById("building").value.trim() || "未填写",
+        room: document.getElementById("room").value.trim() || "未填写",
+        type: document.getElementById("type").value,
+        desc: document.getElementById("desc").value.trim() || "未填写问题描述",
+        phone: document.getElementById("phone").value.trim() || "未填写",
+        state: 0,
+        worker: "待分配",
+        eta: "待宿管确认",
+        created: new Date().toLocaleString("zh-CN", { hour12: false })
+      });
+      render();
+      showScreen("student");
+      showToast("报修单已提交");
+    });
+
+    function showScreen(id) {
+      tabs.forEach((tab) => tab.classList.toggle("active", tab.dataset.screen === id));
+      screens.forEach((screen) => screen.classList.toggle("active", screen.id === id));
+    }
+
+    function render() {
+      studentTicketList.innerHTML = tickets.map(renderStudentTicket).join("");
+      housekeeperPanel.innerHTML = tickets.map(renderHousekeeperCard).join("");
+      workerPanel.innerHTML = tickets.map(renderWorkerCard).join("");
+      bindRoleActions();
+    }
+
+    function renderStudentTicket(ticket) {
+      const doneClass = ticket.state === 3 ? " done" : "";
+      return `
+        <article class="card">
+          <div class="ticket-head">
+            <div>
+              <h2>${ticket.type}</h2>
+              <p class="ticket-meta">${ticket.id}｜${ticket.building} ${ticket.room}｜${ticket.created}</p>
+            </div>
+            <span class="badge${doneClass}">${stateNames[ticket.state]}</span>
+          </div>
+          <p class="ticket-meta">${ticket.desc}</p>
+          <p class="ticket-meta">负责人：${ticket.worker}｜预计时间：${ticket.eta}</p>
+          ${renderTimeline(ticket)}
+        </article>
+      `;
+    }
+
+    function renderTimeline(ticket) {
+      const steps = [
+        ["待受理", "学生提交报修信息，系统生成报修单。"],
+        ["已派单", `宿管已分配给${ticket.worker === "待分配" ? "维修师傅" : ticket.worker}。`],
+        ["预约上门", ticket.eta === "待师傅确认" ? "等待师傅确认上门时间。" : `预计${ticket.eta}前来维修。`],
+        ["维修完成", "维修已完成，学生可确认和评价。"]
+      ];
+      return `
+        <ol class="timeline">
+          ${steps.map((step, index) => {
+            const cls = index < ticket.state ? "done" : index === ticket.state ? "active" : "";
+            return `<li class="${cls}"><strong>${step[0]}</strong><span>${step[1]}</span></li>`;
+          }).join("")}
+        </ol>
+      `;
+    }
+
+    function renderHousekeeperCard(ticket) {
+      return `
+        <article class="card">
+          <div class="ticket-head">
+            <div>
+              <h2>${ticket.building} ${ticket.room}</h2>
+              <p class="ticket-meta">${ticket.id}｜${ticket.type}</p>
+              <p class="ticket-meta">${ticket.desc}</p>
+            </div>
+            <span class="badge">${stateNames[ticket.state]}</span>
+          </div>
+          <p class="ticket-meta">学生电话：${ticket.phone}｜建议优先级：普通</p>
+          <div class="actions">
+            <button class="primary-btn" data-action="dispatch" data-id="${ticket.id}">确认信息并派单</button>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderWorkerCard(ticket) {
+      if (ticket.state === 0) {
+        return `
+          <article class="card">
+            <div class="ticket-head">
+              <div>
+                <h2>${ticket.type}</h2>
+                <p class="ticket-meta">${ticket.building} ${ticket.room}｜需等待宿管派单后处理</p>
+              </div>
+              <span class="badge">${stateNames[ticket.state]}</span>
+            </div>
+            <p class="ticket-meta">问题：${ticket.desc}</p>
+            <p class="ticket-meta">当前预计：${ticket.eta}</p>
+          </article>
+        `;
+      }
+
+      if (ticket.state === 3) {
+        return `
+          <article class="card">
+            <div class="ticket-head">
+              <div>
+                <h2>${ticket.type}</h2>
+                <p class="ticket-meta">${ticket.building} ${ticket.room}｜已完成</p>
+              </div>
+              <span class="badge done">${stateNames[ticket.state]}</span>
+            </div>
+            <p class="ticket-meta">问题：${ticket.desc}</p>
+            <p class="ticket-meta">完成时间：${ticket.eta}</p>
+          </article>
+        `;
+      }
+
+      const isMorning = ticket.eta.includes("上午");
+      const isAfternoon = ticket.eta.includes("下午");
+      const hasConfirmed = ticket.state >= 2;
+
+      return `
+        <article class="card">
+          <div class="ticket-head">
+            <div>
+              <h2>${ticket.type}</h2>
+              <p class="ticket-meta">${ticket.building} ${ticket.room}｜已收到宿管派单</p>
+            </div>
+            <span class="badge">${stateNames[ticket.state]}</span>
+          </div>
+          <p class="ticket-meta">问题：${ticket.desc}</p>
+          <p class="ticket-meta">当前预计：${ticket.eta}</p>
+          <div class="field">
+            <label>选择上门时间</label>
+            <div class="time-pick">
+              <button class="ghost-btn${isMorning && hasConfirmed ? ' selected' : ''}"
+                      data-action="schedule" data-id="${ticket.id}" data-slot="morning">
+                明天上午<br><small>09:00-11:00</small>
+              </button>
+              <button class="ghost-btn${isAfternoon && hasConfirmed ? ' selected' : ''}"
+                      data-action="schedule" data-id="${ticket.id}" data-slot="afternoon">
+                明天下午<br><small>14:00-17:00</small>
+              </button>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="primary-btn" data-action="finish" data-id="${ticket.id}">维修完成并更新状态</button>
+          </div>
+        </article>
+      `;
+    }
+
+    function bindRoleActions() {
+      document.querySelectorAll("[data-action]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const ticket = tickets.find((item) => item.id === button.dataset.id);
+          if (!ticket) return;
+          if (button.dataset.action === "dispatch") {
+            ticket.state = Math.max(ticket.state, 1);
+            ticket.worker = "陈师傅";
+            ticket.eta = "待师傅确认";
+            showToast("已派单给陈师傅");
+          }
+          if (button.dataset.action === "schedule") {
+            if (ticket.state === 0) {
+              showToast("请先由宿管阿姨派单");
+              return;
+            }
+            ticket.state = 2;
+            ticket.worker = "陈师傅";
+            const slot = button.dataset.slot;
+            ticket.eta = slot === "afternoon"
+              ? "明天下午 14:00-17:00"
+              : "明天上午 09:00-11:00";
+            showToast("已更新预计上门时间");
+          }
+          if (button.dataset.action === "finish") {
+            if (ticket.state === 0) {
+              showToast("请先由宿管阿姨派单");
+              return;
+            }
+            ticket.state = 3;
+            ticket.worker = ticket.worker === "待分配" ? "陈师傅" : ticket.worker;
+            ticket.eta = "已完成";
+            showToast("维修已完成");
+          }
+          render();
+        });
+      });
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 1500);
+    }
+
+    render();
+  </script>
+</body>
+</html>

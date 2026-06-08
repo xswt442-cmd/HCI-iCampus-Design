@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>iCampus 宿舍报修卡片原型</title>
+  <style>
+    :root {
+      --paper: #fffdf7;
+      --ink: #202020;
+      --muted: #666;
+      --bg: #f3f0e8;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background: var(--bg);
+      font-family: "Comic Sans MS", "Segoe Print", "Microsoft YaHei", cursive, sans-serif;
+    }
+
+    .page {
+      width: min(1120px, 100%);
+      margin: 0 auto;
+      padding: 28px;
+    }
+
+    header {
+      margin-bottom: 22px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 32px;
+      letter-spacing: 0;
+    }
+
+    .intro {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 780px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(320px, 1fr));
+      gap: 24px;
+      align-items: start;
+    }
+
+    .card {
+      min-height: 260px;
+      padding: 14px;
+      background: var(--paper);
+      border: 3px solid var(--ink);
+      box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.14);
+      transform: rotate(var(--tilt));
+    }
+
+    .card:nth-child(1) { --tilt: -0.8deg; }
+    .card:nth-child(2) { --tilt: 0.7deg; }
+    .card:nth-child(3) { --tilt: 0.4deg; }
+    .card:nth-child(4) { --tilt: -0.5deg; }
+    .card:nth-child(5) { --tilt: 0.6deg; }
+
+    .card-bar {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+      border-bottom: 3px solid var(--ink);
+      font-weight: 700;
+    }
+
+    .screen-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 18px;
+    }
+
+    .dot {
+      width: 24px;
+      height: 24px;
+      border: 3px solid var(--ink);
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .date {
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 86px 1fr;
+      gap: 8px;
+      align-items: center;
+      margin: 10px 0;
+    }
+
+    .label {
+      font-weight: 700;
+    }
+
+    .box,
+    .textarea,
+    .button,
+    .pill {
+      border: 3px solid var(--ink);
+      background: #fff;
+    }
+
+    .box {
+      min-height: 34px;
+      padding: 5px 8px;
+    }
+
+    .textarea {
+      min-height: 68px;
+      padding: 8px;
+      line-height: 1.45;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 7px 18px;
+      margin-top: 10px;
+      font-weight: 700;
+      background: #f7f7f7;
+    }
+
+    .pill {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 4px 12px;
+      font-weight: 700;
+    }
+
+    .timeline {
+      margin: 12px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .timeline li {
+      display: grid;
+      grid-template-columns: 26px 1fr;
+      gap: 8px;
+      margin: 10px 0;
+      align-items: start;
+    }
+
+    .circle {
+      width: 20px;
+      height: 20px;
+      border: 3px solid var(--ink);
+      border-radius: 50%;
+      margin-top: 2px;
+      background: #fff;
+    }
+
+    .circle.filled {
+      background: var(--ink);
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .mini-card {
+      border: 3px solid var(--ink);
+      padding: 10px;
+      background: #fff;
+      min-height: 78px;
+    }
+
+    .arrow {
+      text-align: center;
+      font-size: 24px;
+      margin: 6px 0;
+    }
+
+    @media (max-width: 760px) {
+      .page {
+        padding: 18px;
+      }
+
+      .cards {
+        grid-template-columns: 1fr;
+      }
+
+      .card {
+        transform: none;
+      }
+
+      .split {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <h1>iCampus 宿舍报修：Card-based Prototype</h1>
+      <p class="intro">
+        每张卡片代表一个屏幕或屏幕模块，用低保真方式展示宿舍报修从学生提交、宿管派单到维修完成的主要界面。
+      </p>
+    </header>
+
+    <section class="cards" aria-label="卡片式低保真原型">
+      <article class="card">
+        <div class="card-bar">
+          <div class="screen-title"><span class="dot"></span>学生 / 提交报修</div>
+          <div class="date">Card 01</div>
+        </div>
+        <div class="field-row">
+          <div class="label">楼栋</div>
+          <div class="box">12号楼</div>
+        </div>
+        <div class="field-row">
+          <div class="label">房间</div>
+          <div class="box">508</div>
+        </div>
+        <div class="field-row">
+          <div class="label">类型</div>
+          <div class="box">水电维修  ▾</div>
+        </div>
+        <div class="label">问题描述</div>
+        <div class="textarea">洗手台下方水管漏水，晚上滴水比较明显。</div>
+        <div class="button">提交报修单</div>
+      </article>
+
+      <article class="card">
+        <div class="card-bar">
+          <div class="screen-title"><span class="dot"></span>学生 / 我的进度</div>
+          <div class="date">Card 02</div>
+        </div>
+        <div class="split">
+          <div>
+            <strong>水电维修</strong>
+            <div class="note">WX20260608001<br>12号楼 508</div>
+          </div>
+          <div><span class="pill">已派单</span></div>
+        </div>
+        <p class="note">负责人：陈师傅<br>预计时间：今天下午 14:00-17:00</p>
+        <ol class="timeline">
+          <li><span class="circle filled"></span><div><strong>待受理</strong><br><span class="note">系统生成报修单</span></div></li>
+          <li><span class="circle filled"></span><div><strong>已派单</strong><br><span class="note">宿管已分配给陈师傅</span></div></li>
+          <li><span class="circle"></span><div><strong>预约上门</strong><br><span class="note">等待师傅确认时间</span></div></li>
+          <li><span class="circle"></span><div><strong>维修完成</strong></div></li>
+        </ol>
+      </article>
+
+      <article class="card">
+        <div class="card-bar">
+          <div class="screen-title"><span class="dot"></span>宿管阿姨 / 报修处理</div>
+          <div class="date">Card 03</div>
+        </div>
+        <div class="split">
+          <div class="mini-card"><strong>今日报修</strong><br>2</div>
+          <div class="mini-card"><strong>待派单</strong><br>1</div>
+        </div>
+        <div class="arrow">↓</div>
+        <div class="mini-card">
+          <strong>12号楼 508 / 水电维修</strong>
+          <p class="note">洗手台下方水管漏水。学生电话：138****2026</p>
+          <div class="button">确认信息并派单</div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-bar">
+          <div class="screen-title"><span class="dot"></span>维修师傅 / 我的任务</div>
+          <div class="date">Card 04</div>
+        </div>
+        <div class="field-row">
+          <div class="label">地点</div>
+          <div class="box">12号楼 508</div>
+        </div>
+        <div class="field-row">
+          <div class="label">问题</div>
+          <div class="box">洗手台水管漏水</div>
+        </div>
+        <div class="field-row">
+          <div class="label">电话</div>
+          <div class="box">138****2026</div>
+        </div>
+        <div class="label" style="margin-top:8px">选择上门时间</div>
+        <div class="split">
+          <div class="button" style="text-align:center">明天上午 09:00-11:00 上门</div>
+          <div class="button" style="text-align:center">明天下午 14:00-17:00 上门</div>
+        </div>
+        <div class="button">维修完成并更新状态</div>
+      </article>
+
+      <article class="card">
+        <div class="card-bar">
+          <div class="screen-title"><span class="dot"></span>状态流转 / 总览</div>
+          <div class="date">Card 05</div>
+        </div>
+        <ol class="timeline">
+          <li><span class="circle filled"></span><div><strong>学生提交</strong><br><span class="note">填写宿舍位置、类型和描述</span></div></li>
+          <li><span class="circle filled"></span><div><strong>宿管派单</strong><br><span class="note">确认信息并分配维修师傅</span></div></li>
+          <li><span class="circle filled"></span><div><strong>师傅预约</strong><br><span class="note">反馈预计上门时间</span></div></li>
+          <li><span class="circle"></span><div><strong>维修完成</strong><br><span class="note">学生看到完成状态</span></div></li>
+        </ol>
+      </article>
+    </section>
+  </main>
+</body>
+</html>
